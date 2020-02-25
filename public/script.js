@@ -3,12 +3,12 @@ new Vue({
 	data: {
 		total: 0,
 		products: [
-			{ title: "Product 1", id: 1, price: 9.99 },
-			{ title: "Product 2", id: 2, price: 9.99 },
-			{ title: "Product 3", id: 3, price: 9.99 }
+			
 		],
 		cart: [],
-		search: ""
+		search: "cat",
+		lastSearch: "",
+		loading: false
 	},
 	methods: {
 		addToCart: function(product) {
@@ -45,10 +45,14 @@ new Vue({
 
 		},
 		onSubmit: function(){
+			this.products = []
+			this.loading = true
 			let path = "/search?q=".concat(this.search);
 			this.$http.get(path)
 				.then(function(response) {
-					console.log(response)
+					this.products = response.body;
+					this.lastSearch = this.search
+					this.loading = false
 				});
 
 		}
@@ -58,5 +62,8 @@ new Vue({
 			return "$".concat(price.toFixed(2))
 
 		}
+	},
+	created: function(){
+		this.onSubmit()
 	}
 });
